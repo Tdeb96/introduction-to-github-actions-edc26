@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements-dev.txt
       - name: run black
-        run: python -m black mycode
+        run: python -m black mycode.py
 
   test:
     needs: style   
