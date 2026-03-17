@@ -1,0 +1,38 @@
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  style:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+      - name: run black
+        run: python -m black mycode.py
+
+  test:
+    needs: style   
+    strategy:
+      matrix:
+        os-version: [ubuntu-latest, macos-latest, windows-latest]
+        python_version: [3.12, 3.13, 3.14]
+    runs-on: ${{ matrix.os-version }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python_version }}
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+      - name: run tests
+        run: python -m pytest test_mycode.py
